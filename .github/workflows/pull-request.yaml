@@ -3,7 +3,7 @@ name: GitVersion - PR
 env:
   BUILD_CONFIGURATION: Release
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE: ${{ env.REGISTRY }}/${{ github.actor }}/${{ github.repository }}
   GITVERSION_VERSION: 6.3.0
 
 on:
@@ -90,13 +90,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.IMAGE }}
 
       - name: Calculate docker tags
         id: docker_tags
         run: |
           
-          IMAGE=${{ env.REGISTRY }}/${{ github.actor }}/docker-walkthrough-private/client
+          IMAGE=${{ env.IMAGE }}
           TAGS="$IMAGE:${{ env.SEMVER }}"
           
           if [[ "${{ env.MERGE }}" == "true" ]]; then
@@ -111,7 +111,7 @@ jobs:
         with:
           context: .
           push: true
-          file: src/DockerSampleApp/Dockerfile
+          file: src/react-app/Dockerfile
           build-args: |
             BUILD_CONFIGURATION=${{ env.BUILD_CONFIGURATION }}
             GITVERSION=${{ env.SEMVER }}
@@ -150,12 +150,12 @@ jobs:
 
       - name: Helm lint
         run: |
-          helm lint ./.helm/dockerwalkthroughprivate
+          helm lint ./.helm/react-app
 
       - name: Helm package
         run: |
-          helm package ./.helm/dockerwalkthroughprivate --version ${{ env.SEMVER }} --destination ./.helm/dockerwalkthroughprivate
+          helm package ./.helm/react-app --version ${{ env.SEMVER }} --destination ./.helm/react-app
 
       - name: Helm push
         run: |
-          helm push ./.helm/dockerwalkthroughprivate/dockerwalkthroughprivate-${{ env.SEMVER }}.tgz oci://${{ env.REGISTRY }}/${{ github.actor }}/charts
+          helm push ./.helm/react-app/react-app-${{ env.SEMVER }}.tgz oci://${{ env.REGISTRY }}/${{ github.actor }}/charts
