@@ -3,7 +3,7 @@ name: GitVersion - PR
 env:
   BUILD_CONFIGURATION: Release
   REGISTRY: ghcr.io
-  IMAGE: ${{ env.REGISTRY }}/${{ github.actor }}/${{ github.repository }}
+  IMAGE: ghcr.io/${{ github.actor }}/${{ github.repository }}
   GITVERSION_VERSION: 6.3.0
 
 on:
