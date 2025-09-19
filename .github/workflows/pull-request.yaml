@@ -3,7 +3,7 @@ name: GitVersion - PR
 env:
   BUILD_CONFIGURATION: Release
   REGISTRY: ghcr.io
-  IMAGE: ghcr.io/images/${{ github.repository }}
+  IMAGE_BASE_PATH: ghcr.io/${{ github.actor }}/images
   GITVERSION_VERSION: 6.3.0
 
 on:
@@ -90,13 +90,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.IMAGE }}
+          images: ${{ env.IMAGE_BASE_PATH }}/react-app
 
       - name: Calculate docker tags
         id: docker_tags
         run: |
           
-          IMAGE=${{ env.IMAGE }}
+          IMAGE=${{ env.IMAGE_BASE_PATH }}/react-app
           TAGS="$IMAGE:${{ env.SEMVER }}"
           
           if [[ "${{ env.MERGE }}" == "true" ]]; then
